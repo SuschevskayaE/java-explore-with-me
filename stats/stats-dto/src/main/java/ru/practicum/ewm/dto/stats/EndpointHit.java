@@ -6,7 +6,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 
-@Data
+@Getter
 @AllArgsConstructor
 public class EndpointHit {
 
