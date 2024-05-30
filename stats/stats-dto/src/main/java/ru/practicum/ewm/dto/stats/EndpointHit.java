@@ -6,8 +6,10 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 
-@Getter
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class EndpointHit {
 
     private String app;
