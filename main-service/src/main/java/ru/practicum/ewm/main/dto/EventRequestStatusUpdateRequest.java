@@ -7,9 +7,6 @@ import ru.practicum.ewm.main.dto.enums.StatusRequestEnum;
 
 import java.util.List;
 
-/**
- * Изменение статуса запроса на участие в событии текущего пользователя
- */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

@@ -5,9 +5,6 @@ import lombok.Getter;
 
 import javax.validation.constraints.NotNull;
 
-/**
- * Широта и долгота места проведения события
- */
 @Getter
 @AllArgsConstructor
 public class Location {

@@ -8,10 +8,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-
-/**
- * Категория
- */
 @Getter
 @AllArgsConstructor
 public class CategoryDto {

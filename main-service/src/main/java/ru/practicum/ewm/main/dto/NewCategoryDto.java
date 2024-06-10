@@ -8,10 +8,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-
-/**
- * Данные для добавления новой категории
- */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

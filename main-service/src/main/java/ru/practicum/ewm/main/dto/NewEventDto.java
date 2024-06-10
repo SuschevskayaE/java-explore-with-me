@@ -9,9 +9,6 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
-/**
- * Новое событие
- */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

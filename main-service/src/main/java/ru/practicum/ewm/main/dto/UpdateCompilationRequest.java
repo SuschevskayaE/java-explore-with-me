@@ -8,9 +8,6 @@ import lombok.Setter;
 import javax.validation.constraints.Size;
 import java.util.List;
 
-/**
- * Изменение информации о подборке событий. Если поле в запросе не указано (равно null) - значит изменение этих данных не треубется.
- */
 @Getter
 @Setter
 @NoArgsConstructor

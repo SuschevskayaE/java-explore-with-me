@@ -7,9 +7,6 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-/**
- * Краткая информация о событии
- */
 @Getter
 @Setter
 @AllArgsConstructor

@@ -8,10 +8,6 @@ import ru.practicum.ewm.main.dto.enums.StateEnum;
 
 import java.time.LocalDateTime;
 
-
-/**
- * EventFullDto
- */
 @Getter
 @Setter
 @AllArgsConstructor

@@ -145,15 +145,14 @@ public class EventServiceImpl implements EventService {
                 .peek(r -> r.setStatus(updateRequest.getStatus()))
                 .map(participationRequestRepository::save).collect(Collectors.toList());
 
-        List<ParticipationRequestEntity> requests = participationRequestRepository.findByEventId(eventId);
-
         if (eventEntity.getParticipantLimit() == countRequest + updateRequest.getRequestIds().size()) {
-            requests = requests.stream().filter(r -> r.getStatus().equals(StatusRequestEnum.PENDING))
+            participationRequestRepository.findByEventIdAndStatusIn(eventId, Collections.singletonList(StatusRequestEnum.PENDING)).stream().filter(r -> r.getStatus().equals(StatusRequestEnum.PENDING))
                     .peek(r -> r.setStatus(StatusRequestEnum.REJECTED))
                     .map(participationRequestRepository::save).collect(Collectors.toList());
         }
 
-        List<ParticipationRequestDto> requestsDto = requests
+        List<ParticipationRequestDto> requestsDto = participationRequestRepository
+                .findByEventIdAndStatusIn(eventId, List.of(StatusRequestEnum.CONFIRMED, StatusRequestEnum.REJECTED))
                 .stream()
                 .map(participationRequestMapper::toParticipationRequestDto)
                 .collect(Collectors.toList());

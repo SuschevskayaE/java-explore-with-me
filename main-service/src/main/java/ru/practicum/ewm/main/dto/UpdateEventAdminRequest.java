@@ -10,9 +10,6 @@ import javax.validation.constraints.Future;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
-/**
- * Данные для изменения информации о событии. Если поле в запросе не указано (равно null) - значит изменение этих данных не треубется.
- */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

@@ -8,9 +8,6 @@ import ru.practicum.ewm.main.dto.enums.StatusRequestEnum;
 
 import java.time.LocalDateTime;
 
-/**
- * Заявка на участие в событии
- */
 @Getter
 @Setter
 @AllArgsConstructor
