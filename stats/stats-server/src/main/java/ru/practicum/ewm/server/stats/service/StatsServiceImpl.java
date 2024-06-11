@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dto.stats.EndpointHit;
 import ru.practicum.ewm.dto.stats.ViewStats;
 import ru.practicum.ewm.server.stats.entity.EndpointHitEntity;
+import ru.practicum.ewm.server.stats.exception.ValidationException;
 import ru.practicum.ewm.server.stats.mapper.EndpointHitMapper;
 import ru.practicum.ewm.server.stats.repository.StatsRepository;
 
@@ -28,6 +29,9 @@ public class StatsServiceImpl implements StatsService {
 
     @Override
     public Set<ViewStats> stats(LocalDateTime start, LocalDateTime end, Set<String> uris, boolean unique) {
+        if (start.isAfter(end)) {
+            throw new ValidationException("Кривые даты");
+        }
         return repository.getStats(start, end, uris, unique);
     }
 }
