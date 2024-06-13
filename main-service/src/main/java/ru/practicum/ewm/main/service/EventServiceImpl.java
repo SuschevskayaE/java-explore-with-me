@@ -10,6 +10,7 @@ import ru.practicum.ewm.main.common.FromSizeRequest;
 import ru.practicum.ewm.main.dto.*;
 import ru.practicum.ewm.main.dto.enums.*;
 import ru.practicum.ewm.main.entity.*;
+import ru.practicum.ewm.main.entity.Location;
 import ru.practicum.ewm.main.exeption.BagRequestException;
 import ru.practicum.ewm.main.exeption.DataNotFoundException;
 import ru.practicum.ewm.main.exeption.ValidationException;
@@ -72,7 +73,7 @@ public class EventServiceImpl implements EventService {
         if (eventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ValidationException(String.format("Событие должно содержать дату, которая еще не наступила %s", eventDto.getEventDate()));
         }
-        LocationEntity locationEntity;
+        Location locationEntity;
         if (eventDto.getLocation().getId() == null) {
             locationMapper.toEntity(eventDto.getLocation());
             locationEntity = locationService.saveLocation(locationMapper.toEntity(eventDto.getLocation()));

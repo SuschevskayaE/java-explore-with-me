@@ -5,9 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.main.common.FromSizeRequest;
-import ru.practicum.ewm.main.dto.Location;
 import ru.practicum.ewm.main.dto.NewLocationRequest;
-import ru.practicum.ewm.main.entity.LocationEntity;
+import ru.practicum.ewm.main.entity.Location;
 import ru.practicum.ewm.main.exeption.ValidationException;
 import ru.practicum.ewm.main.mapper.LocationMapper;
 import ru.practicum.ewm.main.repository.EventRepository;
@@ -26,7 +25,7 @@ public class LocationServiceImpl implements LocationService {
     private final EventRepository eventRepository;
 
     @Override
-    public List<Location> getLocations(List<Long> ids, int from, int size) {
+    public List<ru.practicum.ewm.main.dto.Location> getLocations(List<Long> ids, int from, int size) {
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
         final Pageable pageable = FromSizeRequest.of(from, size, sort);
 
@@ -44,7 +43,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Location addLocation(NewLocationRequest request) {
+    public ru.practicum.ewm.main.dto.Location addLocation(NewLocationRequest request) {
         return locationMapper.toLocation(saveLocation(locationMapper.toEntity(request)));
     }
 
@@ -58,7 +57,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public LocationEntity saveLocation(LocationEntity entity) {
+    public Location saveLocation(Location entity) {
         if (entity.getName() != null) {
             locationRepository.findByName(entity.getName())
                     .ifPresent(f -> {
