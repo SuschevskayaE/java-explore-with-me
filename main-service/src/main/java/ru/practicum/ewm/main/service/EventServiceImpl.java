@@ -9,19 +9,14 @@ import ru.practicum.ewm.dto.stats.ViewStats;
 import ru.practicum.ewm.main.common.FromSizeRequest;
 import ru.practicum.ewm.main.dto.*;
 import ru.practicum.ewm.main.dto.enums.*;
-import ru.practicum.ewm.main.entity.CategoryEntity;
-import ru.practicum.ewm.main.entity.EventEntity;
-import ru.practicum.ewm.main.entity.ParticipationRequestEntity;
-import ru.practicum.ewm.main.entity.UserEntity;
+import ru.practicum.ewm.main.entity.*;
 import ru.practicum.ewm.main.exeption.BagRequestException;
 import ru.practicum.ewm.main.exeption.DataNotFoundException;
 import ru.practicum.ewm.main.exeption.ValidationException;
 import ru.practicum.ewm.main.mapper.EventMapper;
+import ru.practicum.ewm.main.mapper.LocationMapper;
 import ru.practicum.ewm.main.mapper.ParticipationRequestMapper;
-import ru.practicum.ewm.main.repository.CategoryRepository;
-import ru.practicum.ewm.main.repository.EventRepository;
-import ru.practicum.ewm.main.repository.ParticipationRequestRepository;
-import ru.practicum.ewm.main.repository.UserRepository;
+import ru.practicum.ewm.main.repository.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -39,6 +34,10 @@ public class EventServiceImpl implements EventService {
 
     private final ParticipationRequestRepository participationRequestRepository;
     private final ParticipationRequestMapper participationRequestMapper;
+
+    private final LocationService locationService;
+    private final LocationMapper locationMapper;
+    private final LocationRepository locationRepository;
 
     private final StatsClient statsClient;
 
@@ -73,12 +72,20 @@ public class EventServiceImpl implements EventService {
         if (eventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ValidationException(String.format("Событие должно содержать дату, которая еще не наступила %s", eventDto.getEventDate()));
         }
-
+        LocationEntity locationEntity;
+        if (eventDto.getLocation().getId() == null) {
+            locationMapper.toEntity(eventDto.getLocation());
+            locationEntity = locationService.saveLocation(locationMapper.toEntity(eventDto.getLocation()));
+        } else {
+            locationEntity = locationRepository.findById(eventDto.getLocation().getId())
+                    .orElseThrow(() -> new DataNotFoundException(String.format("Локация с id %s не найдена", eventDto.getLocation().getId())));
+        }
         EventEntity entity = eventMapper.toEntity(eventDto);
         entity.setInitiator(user);
         entity.setCategory(category);
         entity.setState(StateEnum.PENDING);
         entity.setCreatedOn(LocalDateTime.now());
+        entity.setLocation(locationEntity);
         entity = eventRepository.save(entity);
         return eventMapper.toEventFullDto(entity);
     }
@@ -166,7 +173,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventShortDto> getShortEvents(String text, List<Long> categories, Boolean paid,
                                               LocalDateTime rangeStart, LocalDateTime rangeEnd,
-                                              boolean onlyAvailable, SortEnum sort, int from, int size) {
+                                              boolean onlyAvailable, Float lat, Float lon, Float radius, List<Long> locations, String locationName, SortEnum sort, int from, int size) {
 
         if (rangeStart == null && rangeEnd == null) {
             rangeStart = LocalDateTime.now();
@@ -175,11 +182,12 @@ public class EventServiceImpl implements EventService {
         if (rangeStart.isAfter(rangeEnd)) {
             throw new BagRequestException("Некоректные даты");
         }
+        LocationSearch locationSearch = getLocationSearch(lat, lon, radius, locations, locationName);
 
         Sort sorting = Sort.by(Sort.Direction.DESC, "id");
         final Pageable pageable = FromSizeRequest.of(from, size, sorting);
 
-        List<EventShortDto> eventShortDtos = eventRepository.getShortEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, StateEnum.PUBLISHED, pageable)
+        List<EventShortDto> eventShortDtos = eventRepository.getShortEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, StateEnum.PUBLISHED, locationSearch, pageable)
                 .stream()
                 .map(eventMapper::toEventShortDto)
                 .collect(Collectors.toList());
@@ -222,12 +230,14 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventFullDto> getFullEvents(List<Long> users, List<StateEnum> states,
                                             List<Long> categories, LocalDateTime rangeStart,
-                                            LocalDateTime rangeEnd, int from, int size) {
+                                            LocalDateTime rangeEnd, Float lat, Float lon, Float radius, List<Long> locations, String locationName,
+                                            int from, int size) {
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
         final Pageable pageable = FromSizeRequest.of(from, size, sort);
+        LocationSearch locationSearch = getLocationSearch(lat, lon, radius, locations, locationName);
 
         List<EventFullDto> eventFullDtos = eventRepository.getFullEvents(users, states,
-                        categories, rangeStart, rangeEnd, pageable)
+                        categories, rangeStart, rangeEnd, locationSearch, pageable)
                 .stream()
                 .map(eventMapper::toEventFullDto)
                 .collect(Collectors.toList());
@@ -296,5 +306,15 @@ public class EventServiceImpl implements EventService {
             }).collect(Collectors.toList());
         }
         return hits;
+    }
+
+    private LocationSearch getLocationSearch(Float lat, Float lon, Float radius, List<Long> locations, String locationName) {
+        LocationSearch locationSearch;
+        if (lat == null || lon == null || radius == null) {
+            locationSearch = new LocationSearch(locations, 0, 0, 0, locationName);
+        } else {
+            locationSearch = new LocationSearch(locations, lat, lon, radius, locationName);
+        }
+        return locationSearch;
     }
 }

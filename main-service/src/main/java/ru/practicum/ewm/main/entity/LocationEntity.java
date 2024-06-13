@@ -21,4 +21,10 @@ public class LocationEntity {
 
     @Column(name = "lon", nullable = false)
     private Float lon;
+
+    @Column(name = "radius", nullable = false)
+    private Float radius;
+
+    @Column(name = "name", nullable = false, unique = true)
+    private String name;
 }

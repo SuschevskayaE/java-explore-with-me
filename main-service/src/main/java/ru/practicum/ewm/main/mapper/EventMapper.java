@@ -28,5 +28,6 @@ public interface EventMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "state", ignore = true)
+    @Mapping(target = "location.id", ignore = true)
     void updateEntity(EventEntity event, @MappingTarget EventEntity entity);
 }

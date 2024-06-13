@@ -34,7 +34,7 @@ public class EventEntity {
     @JoinColumn(name = "initiator_id", nullable = false)
     private UserEntity initiator;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id", nullable = false)
     private LocationEntity location;
 

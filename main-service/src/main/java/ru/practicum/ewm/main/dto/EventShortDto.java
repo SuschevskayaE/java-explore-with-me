@@ -29,6 +29,7 @@ public class EventShortDto {
 
     private String title;
 
-    private Long views;
+    private Location location;
 
+    private Long views;
 }

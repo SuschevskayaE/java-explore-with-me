@@ -4,6 +4,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import ru.practicum.ewm.main.dto.LocationSearch;
 import ru.practicum.ewm.main.dto.enums.StateEnum;
 import ru.practicum.ewm.main.entity.EventEntity;
 
@@ -19,17 +20,26 @@ public interface EventRepository extends JpaRepository<EventEntity, Long> {
 
     List<EventEntity> findByCategoryId(Long categoryId);
 
+    List<EventEntity> findByLocationId(Long locationId);
+
     @Query("select e from EventEntity e " +
             "where ((:users) is null or e.initiator.id in (:users)) " +
             "and ((:states) is null or e.state in (:states)) " +
             "and ((:categories) is null or e.category.id in (:categories)) " +
             "and ((e.eventDate >= :rangeStart) or (cast(:rangeStart as date) is null)) " +
-            "and ((e.eventDate <= :rangeEnd) or (cast(:rangeEnd as date) is null)) ")
+            "and ((e.eventDate <= :rangeEnd) or (cast(:rangeEnd as date) is null)) " +
+            "and ((:#{#locationSearch.ids}) is null or e.location.id in (:#{#locationSearch.ids})) " +
+            "and ((:#{#locationSearch.name}) is null or e.location.name = (:#{#locationSearch.name})) " +
+            "and (((:#{#locationSearch.lat}) = 0F or " +
+            "(:#{#locationSearch.lon}) = 0F or " +
+            "(:#{#locationSearch.radius}) = 0F ) " +
+            "or distance((:#{#locationSearch.lat}), (:#{#locationSearch.lon}), e.location.lat, e.location.lon) < (:#{#locationSearch.radius}) ) ")
     List<EventEntity> getFullEvents(@Param("users") List<Long> users,
                                     @Param("states") List<StateEnum> states,
                                     @Param("categories") List<Long> categories,
                                     @Param("rangeStart") LocalDateTime rangeStart,
-                                    @Param("rangeEnd") LocalDateTime rangeEnd, Pageable pageable);
+                                    @Param("rangeEnd") LocalDateTime rangeEnd,
+                                    @Param("locationSearch") LocationSearch locationSearch, Pageable pageable);
 
 
     @Query("select e from EventEntity e " +
@@ -39,7 +49,13 @@ public interface EventRepository extends JpaRepository<EventEntity, Long> {
             "and ((:onlyAvailable) = false or e.participantLimit >= 0 ) " +
             "and ((e.eventDate >= :rangeStart) or (cast(:rangeStart as date) is null)) " +
             "and ((e.eventDate <= :rangeEnd) or (cast(:rangeEnd as date) is null)) " +
-            "and e.state in (:state) ")
+            "and e.state in (:state) " +
+            "and ((:#{#locationSearch.ids}) is null or e.location.id in (:#{#locationSearch.ids})) " +
+            "and ((:#{#locationSearch.name}) is null or e.location.name = (:#{#locationSearch.name})) " +
+            "and (( (:#{#locationSearch.lat}) = 0F or " +
+            "(:#{#locationSearch.lon}) = 0F or " +
+            "(:#{#locationSearch.radius}) = 0F ) " +
+            "or distance((:#{#locationSearch.lat}), (:#{#locationSearch.lon}), e.location.lat, e.location.lon) < (:#{#locationSearch.radius}) ) ")
     List<EventEntity> getShortEvents(@Param("text") String text,
                                      @Param("categories") List<Long> categories,
                                      @Param("paid") Boolean paid,
@@ -47,5 +63,6 @@ public interface EventRepository extends JpaRepository<EventEntity, Long> {
                                      @Param("rangeEnd") LocalDateTime rangeEnd,
                                      @Param("onlyAvailable") Boolean onlyAvailable,
                                      @Param("state") StateEnum state,
+                                     @Param("locationSearch") LocationSearch locationSearch,
                                      Pageable pageable);
 }
