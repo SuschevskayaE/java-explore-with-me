@@ -43,12 +43,17 @@ public class EventPublicController {
                                               @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
                                               @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
                                               @RequestParam(defaultValue = "false", required = false) boolean onlyAvailable,
+                                              @RequestParam(required = false) Float lat,
+                                              @RequestParam(required = false) Float lon,
+                                              @RequestParam(required = false) Float radius,
+                                              @RequestParam(required = false) List<Long> locations,
+                                              @RequestParam(required = false) String locationName,
                                               @RequestParam(required = false) SortEnum sort,
                                               @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                               @RequestParam(defaultValue = "10") @Positive int size,
                                               HttpServletRequest request) {
         sendHits(request);
-        return eventService.getShortEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+        return eventService.getShortEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, lat, lon, radius, locations, locationName, sort, from, size);
     }
 
     @GetMapping("/{id}")

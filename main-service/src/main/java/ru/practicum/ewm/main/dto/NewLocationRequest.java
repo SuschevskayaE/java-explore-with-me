@@ -1,17 +1,17 @@
 package ru.practicum.ewm.main.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Location {
-
-    private Long id;
+public class NewLocationRequest {
 
     @NotNull
     private Float lat;
@@ -19,13 +19,11 @@ public class Location {
     @NotNull
     private Float lon;
 
-    @Builder.Default
-    private Float radius = 0F;
+    @NotNull
+    @Positive
+    private Float radius;
 
+    @NotNull
+    @NotBlank
     private String name;
-
-    public Location() {
-        radius = 0F;
-    }
-
 }

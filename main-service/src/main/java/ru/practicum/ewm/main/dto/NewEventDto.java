@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
@@ -33,6 +34,7 @@ public class NewEventDto {
     private LocalDateTime eventDate;
 
     @NotNull
+    @Valid
     private Location location;
 
     @Builder.Default

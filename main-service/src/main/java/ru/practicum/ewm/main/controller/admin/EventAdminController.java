@@ -32,9 +32,14 @@ public class EventAdminController {
                                             @RequestParam(required = false) List<Long> categories,
                                             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
                                             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
+                                            @RequestParam(required = false) Float lat,
+                                            @RequestParam(required = false) Float lon,
+                                            @RequestParam(required = false) Float radius,
+                                            @RequestParam(required = false) List<Long> locations,
+                                            @RequestParam(required = false) String locationName,
                                             @RequestParam(defaultValue = "0") int from,
                                             @RequestParam(defaultValue = "10") int size) {
-        return eventService.getFullEvents(users, states, categories, rangeStart, rangeEnd, from, size);
+        return eventService.getFullEvents(users, states, categories, rangeStart, rangeEnd, lat, lon, radius, locations, locationName, from, size);
     }
 
     @PatchMapping("/{eventId}")

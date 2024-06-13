@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Table(name = "locations")
 @Getter
 @Setter
-public class LocationEntity {
+public class Location {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,4 +21,10 @@ public class LocationEntity {
 
     @Column(name = "lon", nullable = false)
     private Float lon;
+
+    @Column(name = "radius", nullable = false)
+    private Float radius;
+
+    @Column(name = "name", nullable = false, unique = true)
+    private String name;
 }
