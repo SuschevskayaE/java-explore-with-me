@@ -1,4 +1,4 @@
 # java-explore-with-me
-Template repository for ExploreWithMe project.
+Финальный проект курса Java-разработчик
 
 ![img.png](img.png)
